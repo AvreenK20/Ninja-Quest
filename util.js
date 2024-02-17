@@ -57,3 +57,18 @@ window.requestAnimFrame = (() => {
 const getDistance = (p1, p2) => {
     return Math.sqrt(Math.pow(p2.x - p1.x, 2) + Math.pow(p2.y - p1.y, 2));
 };
+
+/**  
+ * Function to determine if A can see B
+ * @param {Entity} A, B, Two objects with a radius 
+ * @returns True if A can "see" B, False otherwise 
+ */
+function canSee(A, B) {
+    return (getDistance(A, B) < A.visualRadius + B.radius);
+};
+
+const PARAMS = {
+    DEBUG: true,
+    SCALE: 6,
+    BITWIDTH: 16
+};

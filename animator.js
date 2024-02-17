@@ -12,11 +12,10 @@ class Animator {
         this.elapsedTime += tick;
 
         if (this.isDone()) {
-
             if (this.loop) {
                 this.elapsedTime -= this.totalTime;
             } else {
-                return;
+                return 
             }
         }
 
@@ -41,10 +40,10 @@ class Animator {
             this.height * scale);
 
         ctx.restore(); 
-        // if (PARAMS.DEBUG) {
-        //     ctx.strokeStyle = 'Green';
-        //     ctx.strokeRect(x, y, this.width * scale, this.height * scale);
-        // }
+        if (PARAMS.DEBUG) {
+            ctx.strokeStyle = 'Green';
+            ctx.strokeRect(x, y, this.width * scale, this.height * scale);
+        }
     };
 
     currentFrame() {

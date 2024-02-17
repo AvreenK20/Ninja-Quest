@@ -1,5 +1,4 @@
-﻿
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html>
 <head>
     <meta charset="utf-8">
@@ -10,12 +9,23 @@
     <script type="text/javascript" src="./gameengine.js"></script>
     <script type="text/javascript" src="./util.js"></script>
     <script type="text/javascript" src="./animator.js"></script>
+    <script type="text/javascript" src="./healthbar.js"></script>
     <script type="text/javascript" src="./naruto.js"></script>
-    <script type="text/javascript" src="./ninja.js"></script>
-    <script type="text/javascript" src="./wolf.js"></script>
+    <script type="text/javascript" src="./items.js"></script>
+    <script type="text/javascript" src="./enemies.js"></script>
+    <script type="text/javascript" src="./boundingbox.js"></script>
+    <script type="text/javascript" src="./blocks.js"></script>
+    <script type="text/javascript" src="./background.js"></script>
+    <script type="text/javascript" src="./levels.js"></script>
+    <script type="text/javascript" src="./sceneManager.js"></script>
     <script type="text/javascript" src="./main.js"></script>
 </head>
 <body>
-    <canvas id="gameWorld" width="1024" height="768" style="background: white; border: 1px solid black" tabindex="0" autofocus></canvas>
+    <canvas id="gameWorld" width="1024" height="768" style="background: white; border: 1px solid black;" tabindex="0" autofocus></canvas>
+
+    <div>
+        <br />
+        <input type="checkbox" id="debug"> Debug 
+    </div>
 </body>
 </html>

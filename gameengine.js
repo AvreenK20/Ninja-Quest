@@ -93,31 +93,15 @@ class GameEngine {
             switch (e.code) {
                 case "KeyA":
                     this.left = true;
-                    console.log("left");
                     break;
                 case "KeyD":
                     this.right = true;
-                    console.log("right");
                     break;
                 case "KeyW":
                     this.up = true;
-                    console.log("up");
                     break;
                 case "KeyS":
                     this.down = true;
-                    console.log("down");
-                    break;
-                case "KeyE":
-                    this.e = true;
-                    console.log("e");
-                    break;
-                case "KeyQ":
-                    this.q = true;
-                    console.log("q");
-                    break;
-                case"Space":
-                    this.spacebar = true;
-                    console.log("space");
                     break;
                 case"KeyP":
                     this.attack = true;
@@ -126,10 +110,10 @@ class GameEngine {
                     this.damage = true;
                     break;    
                 case "KeyK":
-                    that.dead = true;
+                    this.dead = true;
                     break;
                 case "KeyO":
-                    that.throw = true;
+                    this.throw = true;
                     break;
             }
         }, false);
@@ -148,15 +132,6 @@ class GameEngine {
                 case "KeyS":
                     this.down = false;
                     break;
-                case "KeyE":
-                    this.e = false;
-                    break;
-                case "KeyQ":
-                    this.q = false;
-                    break;
-                case"Space":
-                    this.spacebar = false;
-                    break;
                 case"KeyP":
                     this.attack = false;
                     break;
@@ -164,10 +139,10 @@ class GameEngine {
                     this.damage = false;
                     break;
                 case "KeyK":
-                    that.dead = false;
+                    this.dead = false;
                     break;
                 case "KeyO":
-                    that.throw = false;
+                    this.throw = false;
                     break;
             }
         }, false);
@@ -185,6 +160,8 @@ class GameEngine {
         for (let i = this.entities.length - 1; i >= 0; i--) {
             this.entities[i].draw(this.ctx, this);
         }
+
+        this.camera.update();
     };
 
     //goes through the list of entities and updates each entity, if the entity won't be removed.

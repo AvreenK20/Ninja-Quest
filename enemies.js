@@ -18,8 +18,8 @@ class Frog {
         this.radius = 10 * this.scale;
         this.visualRadius = 125 * this.scale;
 
-        this.hitpoints = 100;
-        this.maxhitpoints = 100;
+        this.currentHealth = 3;
+        this.maxHealth = 3;
 
         this.spritesheet = ASSET_MANAGER.getAsset("./sprites/ToxicFrog" + this.color + ".png");
 
@@ -74,7 +74,7 @@ class Frog {
     };
 
     update() {
-        if(this.hitpoints <= 0) {
+        if(this.currentHealth <= 0) {
             this.state = 4;
             this.dead = true;
         }
@@ -140,10 +140,8 @@ class Frog {
                             this.state = 2;
                             this.elapsedTime = 0;
                         } else if (this.elapsedTimeAttack > 0.8) {
-                            var damage = 10;
                             entity.state = 6;
-                            entity.hitpoints -= damage;
-                            this.game.addEntity(new Score(this.game, entity.x - this.game.camera.x, entity.y  - this.game.camera.y, damage));
+                            entity.currentHealth -= 1;
                             this.elapsedTimeAttack = 0;
                         }
 

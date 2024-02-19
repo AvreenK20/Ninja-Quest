@@ -8,16 +8,13 @@ class SceneManager {
         this.coins = 0;
         this.lives = 3;
 
-        this.gameOver = false;
-
         this.title = true;
         this.credits = false;
         this.level = null;
 
         this.naruto = new Naruto(this.game, 0, 0);
-        this.game.addEntity(this.naruto);
 
-        this.loadLevel(levelOne, 0, 0, false, true);
+        this.loadLevel(levelOne, 0, 0, true, false, false);
     };
 
     clearEntities() {
@@ -26,16 +23,16 @@ class SceneManager {
         });
     };
 
-    loadLevel(level, x, y, transition, title) {
-        this.title = title;
+    loadLevel(level, x, y, transition, gameOver, gameWin) {
         this.level = level;
         this.clearEntities();
         this.x = 0;
         this.y = 0;
-    
         if (transition) {
-            // this.game.addEntity(new TransitionScreen(this.game, level, x, y, title));
+            this.game.addEntity(new TransitionScreen(this.game, level, x, y, gameOver, gameWin));
         } else {
+            this.game.addEntity(this.naruto);
+
             if (level.frogs) {
                 for (var i = 0; i < level.frogs.length; i++) {
                     let frog = level.frogs[i];
@@ -45,13 +42,13 @@ class SceneManager {
             if (level.cats) {
                 for (var i = 0; i < level.cats.length; i++) {
                     let cat = level.cats[i];
-                    this.game.addEntity(new Cat(this.game, cat.x * PARAMS.BLOCKWIDTH, cat.y * PARAMS.BLOCKWIDTH, cat.scale));
+                    this.game.addEntity(new Cat(this.game, cat.x * PARAMS.BLOCKWIDTH, cat.y * PARAMS.BLOCKWIDTH, cat.scale, cat.chosenOne));
                 }
             }
             if (level.platforms) {
                 for (var i = 0; i < level.platforms.length; i++) {
                     let platform = level.platforms[i];
-                    this.game.addEntity(new Platform(this.game, platform.x * PARAMS.BLOCKWIDTH, platform.y * PARAMS.BLOCKWIDTH, platform.size * PARAMS.BLOCKWIDTH, platform.scale, platform.type, platform.moving, platform.direction));
+                    this.game.addEntity(new Platform(this.game, platform.x * PARAMS.BLOCKWIDTH, platform.y * PARAMS.BLOCKWIDTH, platform.size * PARAMS.BLOCKWIDTH, platform.scale, platform.type, platform.moving, platform.direction, platform.speed));
                 }
             } 
             if (level.leaves) {
@@ -127,6 +124,10 @@ class SceneManager {
     };
 
     update() {
+        if (this.game.naruto.gameOver || this.game.naruto.gameWin) {
+            this.loadLevel(levelOne, 0, 0, true, this.game.naruto.gameOver, this.game.naruto.gameWin);
+        }
+
         PARAMS.DEBUG = document.getElementById('debug').checked;
     
         // Calculate the midpoint of the canvas 
@@ -139,10 +140,8 @@ class SceneManager {
         }
 
         // Update the camera's y-coordinate to follow Naruto vertically 
-        if (this.naruto.y - midpointY > 0 && this.naruto.y < PARAMS.CANVAS_HEIGHT - PARAMS.BLOCKWIDTH * 1.1) this.y = this.naruto.y - midpointY;
+        if (this.naruto.y - midpointY > 0 && this.naruto.y < PARAMS.CANVAS_HEIGHT - PARAMS.BLOCKWIDTH * 1.3) this.y = this.naruto.y - midpointY;
     };
 
-    draw(ctx) {
-
-    }
+    draw(ctx) {}
 };

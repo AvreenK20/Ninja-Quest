@@ -7,6 +7,10 @@ ASSET_MANAGER.queueDownload("./sprites/naruto.png");
 // Cat (Trophy)
 ASSET_MANAGER.queueDownload("./sprites/cat.png");
 
+// Transition Screens
+ASSET_MANAGER.queueDownload("./sprites/cloud.png");
+ASSET_MANAGER.queueDownload("./sprites/title.png");
+
 // Enemy Entities 
 ASSET_MANAGER.queueDownload("./sprites/ToxicFrogBlueBlue.png");
 ASSET_MANAGER.queueDownload("./sprites/ToxicFrogGreenBrown.png");

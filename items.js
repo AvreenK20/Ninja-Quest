@@ -1,6 +1,6 @@
 class Cat {
-    constructor(game, x, y, scale) {
-        Object.assign(this, { game, x, y, scale});
+    constructor(game, x, y, scale, chosenOne) {
+        Object.assign(this, { game, x, y, scale, chosenOne});
 
         this.game.cat = this;
         this.spritesheet = ASSET_MANAGER.getAsset("./sprites/cat.png");

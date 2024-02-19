@@ -116,9 +116,8 @@ class Edge {
 }
 
 class Platform {
-    constructor(game, x, y, w, scale, type, moving, direction) {
-        Object.assign(this, { game, x, y, w, scale, type, moving, direction });
-        console.log(this.y);
+    constructor(game, x, y, w, scale, type, moving, direction, speed) {
+        Object.assign(this, { game, x, y, w, scale, type, moving, direction, speed });
         this.spritesheet = ASSET_MANAGER.getAsset("./sprites/scenery.png");
 
         this.updateBB();
@@ -128,9 +127,7 @@ class Platform {
 
     update() {
         if (this.moving) {
-
-            this.speed = 50;
-
+            console.log(this.speed);
             this.x += this.speed * this.game.clockTick * this.direction;
             this.tracker += this.speed * this.game.clockTick;
 

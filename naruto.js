@@ -5,13 +5,16 @@ class Naruto {
         this.game.naruto = this;
         this.spritesheet = ASSET_MANAGER.getAsset("./sprites/naruto.png");
         this.scale = 3;
+
         this.dead = false;
+        this.gameOver = false;
+        this.gameWin = false;
 
         this.speed = 25 * this.scale;
         this.radius = 10 * this.scale;
 
-        this.hitpoints = 1000;
-        this.maxhitpoints = 1000;
+        this.currentHealth = 10;
+        this.maxHealth = 10;
         this.healthbar = new HealthBar(this);
 
         this.facing = 1; // 0 = left, 1 = right
@@ -90,6 +93,9 @@ class Naruto {
     die() {
         this.state = 7;
         this.dead = true;
+        this.gameOver = true;
+        this.gameWin = false;
+        console.log("DEAD DEAD DEAD");
     }
 
     update () {
@@ -106,7 +112,7 @@ class Naruto {
             }
         }
 
-        if(this.hitpoints <= 0 || this.y > PARAMS.BLOCKWIDTH * 16) {
+        if(this.currentHealth <= 0 || this.y > PARAMS.BLOCKWIDTH * 16) {
             this.die();
         }
 
@@ -213,21 +219,23 @@ class Naruto {
 
                         that.updateBB();
                     } else if (entity instanceof Frog) {
-                        
                         if (this.lastBB.left <= entity.BB.right && this.facing === 0 ||
                            (this.lastBB.right >= entity.BB.left && this.facing === 1)) {
                             if(this.state === 4) {
                                 if (this.elapsedTimeAttack > 0.4 && !entity.dead) {
                                     entity.state = 3;
-                                    var damage = 10;
-                                    entity.hitpoints -= damage;
-                                    this.game.addEntity(new Score(this.game, entity.x - this.game.camera.x, entity.y - this.game.camera.y, damage));
+                                    entity.currentHealth -= 1;
                                     this.elapsedTimeAttack = 0;
                                 }
                             }
                         }
                     }
 
+                    else if (entity instanceof Cat) {
+                            if(entity.chosenOne) {
+                                this.gameWin = true;
+                            }
+                        }
                     that.updateBB();
                 } 
             });          
@@ -305,5 +313,56 @@ class Naruto {
 //             ctx.strokeStyle = 'Red';
 //             ctx.strokeRect(this.BB.x - this.game.camera.x, this.BB.y, this.BB.width, this.BB.height);
 //         }
+//     }
+// }
+
+// class Naruto { // creative mode
+//     constructor(game, x, y) {
+//         Object.assign(this, { game, x, y});
+
+//         this.game.naruto = this;
+//         this.spritesheet = ASSET_MANAGER.getAsset("./sprites/naruto.png");
+//         this.scale = 3;
+
+//         this.facing = 1; // 0 = left, 1 = right
+//         this.state = 0; // 0 = idle, 1 = run, 2 = jump, 3 = crouch, 4 = punch, 5 = throw, 6 = hurt
+
+//         this.animations = [];
+//         this.loadAnimations();
+//     };
+
+//     loadAnimations() {
+//         for (var i = 0; i < 2; i++) { // 2 directions
+//             this.animations.push([]);
+//             for (var j = 0; j < 7; j++) { // 7 states
+//                 this.animations[i].push([]);
+//             }
+//         }
+    
+//         // 1 = right
+//         // 0 = idle
+//         this.animations[1][0] = new Animator(this.spritesheet,    66,   113,   23,   37,   3, 0.3,  8, false, true, false);
+//     };
+
+//     update () {
+
+//         this.creativeSpeed = 1000;
+
+//         if (this.game.right) {
+//             this.x = this.x + this.creativeSpeed * this.game.clockTick;
+//         }    
+//         if (this.game.left) {
+//             this.x = this.x - this.creativeSpeed * this.game.clockTick;
+//         }   
+//         if (this.game.up) {
+//             this.y = this.y - this.creativeSpeed * this.game.clockTick;
+//         }    
+//         if (this.game.down) {
+//             this.y = this.y + this.creativeSpeed * this.game.clockTick;
+//         }  
+//     }
+
+//     draw(ctx) { 
+//         this.animations[this.facing][this.state].drawFrame(this.game.clockTick, ctx, this.x - this.game.camera.x, this.y - this.game.camera.y, this.scale);
 //     }
 // }

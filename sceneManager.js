@@ -28,11 +28,71 @@ class SceneManager {
         this.clearEntities();
         this.x = 0;
         this.y = 0;
+
         if (transition) {
             this.game.addEntity(new TransitionScreen(this.game, level, x, y, gameOver, gameWin));
         } else {
-            this.game.addEntity(this.naruto);
+            this.background = new Background(this.game, 0, 0);
+            this.game.addEntity(this.background);
 
+            if (level.trunks) {
+                for (var i = 0; i < level.trunks.length; i++) {
+                    let trunk = level.trunks[i];
+                    this.game.addEntity(new Trunk(this.game, trunk.x * PARAMS.BLOCKWIDTH, trunk.y * PARAMS.BLOCKWIDTH, trunk.size));
+                }
+            }
+
+            if (level.branches) {
+                for (var i = 0; i < level.branches.length; i++) {
+                    let branch = level.branches[i];
+                    this.game.addEntity(new Branch(this.game, branch.x * PARAMS.BLOCKWIDTH, branch.y * PARAMS.BLOCKWIDTH, branch.size));
+                }
+            }
+
+            if (level.beams) {
+                for (var i = 0; i < level.beams.length; i++) {
+                    let beam = level.beams[i];
+                    this.game.addEntity(new Beam(this.game, beam.x * PARAMS.BLOCKWIDTH, beam.y * PARAMS.BLOCKWIDTH, beam.size * PARAMS.BLOCKWIDTH, beam.scale, beam.type));
+                }
+            }
+
+            if (level.dirt) {
+                for (var i = 0; i < level.dirt.length; i++) {
+                    let dirt = level.dirt[i];
+                    this.game.addEntity(new Dirt(this.game, dirt.x * PARAMS.BLOCKWIDTH, dirt.y * PARAMS.BLOCKWIDTH, dirt.size * PARAMS.BLOCKWIDTH, dirt.type));
+                }
+            }
+
+            if (level.bricks) {
+                for (var i = 0; i < level.bricks.length; i++) {
+                    let brick = level.bricks[i];
+                    this.game.addEntity(new Brick(this.game, brick.x * PARAMS.BLOCKWIDTH, brick.y * PARAMS.BLOCKWIDTH, brick.size * PARAMS.BLOCKWIDTH));
+                }
+            }
+            if (level.ground) {
+                for (var i = 0; i < level.ground.length; i++) {
+                    let ground = level.ground[i];
+                    this.game.addEntity(new Ground(this.game, ground.x * PARAMS.BLOCKWIDTH, ground.y * PARAMS.BLOCKWIDTH, ground.size * PARAMS.BLOCKWIDTH));
+                }
+            }
+            if (level.edges) {
+                for (var i = 0; i < level.edges.length; i++) {
+                    let edge = level.edges[i];
+                    this.game.addEntity(new Edge(this.game, edge.x * PARAMS.BLOCKWIDTH, edge.y * PARAMS.BLOCKWIDTH, edge.type));
+                }
+            }
+            if (level.leaves) {
+                for (var i = 0; i < level.leaves.length; i++) {
+                    let leaf = level.leaves[i];
+                    this.game.addEntity(new Leaf(this.game, leaf.x * PARAMS.BLOCKWIDTH, leaf.y * PARAMS.BLOCKWIDTH, leaf.size, leaf.color));
+                }
+            }
+            if (level.platforms) {
+                for (var i = 0; i < level.platforms.length; i++) {
+                    let platform = level.platforms[i];
+                    this.game.addEntity(new Platform(this.game, platform.x * PARAMS.BLOCKWIDTH, platform.y * PARAMS.BLOCKWIDTH, platform.size * PARAMS.BLOCKWIDTH, platform.scale, platform.type, platform.moving, platform.direction, platform.speed));
+                }
+            }
             if (level.frogs) {
                 for (var i = 0; i < level.frogs.length; i++) {
                     let frog = level.frogs[i];
@@ -45,64 +105,15 @@ class SceneManager {
                     this.game.addEntity(new Cat(this.game, cat.x * PARAMS.BLOCKWIDTH, cat.y * PARAMS.BLOCKWIDTH, cat.scale, cat.chosenOne));
                 }
             }
-            if (level.platforms) {
-                for (var i = 0; i < level.platforms.length; i++) {
-                    let platform = level.platforms[i];
-                    this.game.addEntity(new Platform(this.game, platform.x * PARAMS.BLOCKWIDTH, platform.y * PARAMS.BLOCKWIDTH, platform.size * PARAMS.BLOCKWIDTH, platform.scale, platform.type, platform.moving, platform.direction, platform.speed));
+            if (level.pills) {
+                for (var i = 0; i < level.pills.length; i++) {
+                    let pill = level.pills[i];
+                    this.game.addEntity(new Pill(this.game, pill.x * PARAMS.BLOCKWIDTH, pill.y * PARAMS.BLOCKWIDTH, pill.scale));
                 }
-            } 
-            if (level.leaves) {
-                for (var i = 0; i < level.leaves.length; i++) {
-                    let leaf = level.leaves[i];
-                    this.game.addEntity(new Leaf(this.game, leaf.x * PARAMS.BLOCKWIDTH, leaf.y * PARAMS.BLOCKWIDTH, leaf.size, leaf.color));
-                }
-            } 
-            if (level.ground) {
-                for (var i = 0; i < level.ground.length; i++) {
-                    let ground = level.ground[i];
-                    this.game.addEntity(new Ground(this.game, ground.x * PARAMS.BLOCKWIDTH, ground.y * PARAMS.BLOCKWIDTH, ground.size * PARAMS.BLOCKWIDTH));
-                }
-            }  
-            if (level.edges) {
-                for (var i = 0; i < level.edges.length; i++) {
-                    let edge = level.edges[i];
-                    this.game.addEntity(new Edge(this.game, edge.x * PARAMS.BLOCKWIDTH, edge.y * PARAMS.BLOCKWIDTH, edge.type));
-                }
-            } 
-            if (level.bricks) {
-                for (var i = 0; i < level.bricks.length; i++) {
-                    let brick = level.bricks[i];
-                    this.game.addEntity(new Brick(this.game, brick.x * PARAMS.BLOCKWIDTH, brick.y * PARAMS.BLOCKWIDTH, brick.size * PARAMS.BLOCKWIDTH));
-                }
-            }  
-            if (level.dirt) {
-                for (var i = 0; i < level.dirt.length; i++) {
-                    let dirt = level.dirt[i];
-                    this.game.addEntity(new Dirt(this.game, dirt.x * PARAMS.BLOCKWIDTH, dirt.y * PARAMS.BLOCKWIDTH, dirt.size * PARAMS.BLOCKWIDTH, dirt.type));
-                }
-            } 
-            if (level.beams) {
-                for (var i = 0; i < level.beams.length; i++) {
-                    let beam = level.beams[i];
-                    this.game.addEntity(new Beam(this.game, beam.x * PARAMS.BLOCKWIDTH, beam.y * PARAMS.BLOCKWIDTH, beam.size * PARAMS.BLOCKWIDTH, beam.scale, beam.type));
-                }
-            } 
-            if (level.branches) {
-                for (var i = 0; i < level.branches.length; i++) {
-                    let branch = level.branches[i];
-                    this.game.addEntity(new Branch(this.game, branch.x * PARAMS.BLOCKWIDTH, branch.y * PARAMS.BLOCKWIDTH, branch.size));
-                }
-            }  
-            if (level.trunks) {
-                for (var i = 0; i < level.trunks.length; i++) {
-                    let trunk = level.trunks[i];
-                    this.game.addEntity(new Trunk(this.game, trunk.x * PARAMS.BLOCKWIDTH, trunk.y * PARAMS.BLOCKWIDTH, trunk.size));
-                }
-            }                  
+            }
 
-            this.background = new Background(this.game, 0, 0);
-            this.game.addEntity(this.background);
-            
+            this.game.addEntity(this.naruto);
+
             this.naruto.x = x;
             this.naruto.y = y;
             this.naruto.removeFromWorld = false;
@@ -129,6 +140,7 @@ class SceneManager {
         }
 
         PARAMS.DEBUG = document.getElementById('debug').checked;
+        PARAMS.CREATIVE = document.getElementById('creative').checked;
     
         // Calculate the midpoint of the canvas 
         let midpointX = PARAMS.CANVAS_WIDTH / 2 - PARAMS.BLOCKWIDTH / 2;

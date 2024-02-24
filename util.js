@@ -68,7 +68,8 @@ function canSee(A, B) {
 };
 
 const PARAMS = {
-    DEBUG: true,
-    SCALE: 6,
-    BITWIDTH: 16
+    DEBUG: false,
+    CREATIVE: false,
+    BITWIDTH: 16,
+    SCALE: 6
 };

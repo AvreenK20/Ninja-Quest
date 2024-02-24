@@ -15,17 +15,17 @@ class Frog {
 
         this.healthbar = new HealthBar(this);
 
-        this.radius = 10 * this.scale;
-        this.visualRadius = 125 * this.scale;
-
         this.currentHealth = 3;
         this.maxHealth = 3;
 
-        this.spritesheet = ASSET_MANAGER.getAsset("./sprites/ToxicFrog" + this.color + ".png");
+        this.spritesheet = ASSET_MANAGER.getAsset("./sprites/enemies/frog_" + this.color + ".png");
 
         this.speed = 25; // pixels per second
 
         this.updateBB();
+        this.updateDB();
+        this.updateAB();
+        this.updateCircle();
         this.animations = [];
         this.loadAnimations();
     };
@@ -55,9 +55,13 @@ class Frog {
         this.animations[1][4] = new Animator(this.spritesheet,    10,   205,   25,   20,   9, 0.3, 23, false, false, false);
     };
 
+    updateCircle() {
+        this.BC = new BoundingCircle(this.BB.x + this.BB.width / 2, this.BB.y + this.BB.height / 2, 10 * this.scale, 125 * this.scale);
+    }
+
     updateBB() {
         if (this.state === 1) {
-            this.BB = new BoundingBox(this.x, this.y, 25 * this.scale, 23.5 * this.scale);
+            this.BB = new BoundingBox(this.x, this.y, 25 * this.scale, 22 * this.scale);
         } else if (this.state === 2) {
             this.BB = new BoundingBox(this.x, this.y, 34 * this.scale, 19.5 * this.scale);
         } else if (this.state === 3) {
@@ -73,20 +77,55 @@ class Frog {
         this.lastBB = this.BB;
     };
 
-    update() {
+    updateDB() {
+        if (this.state === 1) {
+            this.DB = new BoundingBox(this.x, this.y, 25 * this.scale, 23.5 * this.scale);
+        } else if (this.state === 2) {
+            this.DB = new BoundingBox(this.x, this.y, 34 * this.scale, 19.5 * this.scale);
+        } else if (this.state === 3) {
+            this.DB = new BoundingBox(this.x, this.y, 25 * this.scale, 16 * this.scale);
+        } else if (this.state === 4) {
+            this.DB = new BoundingBox(this.x, this.y, 25 * this.scale, 20 * this.scale);
+        } else {
+            this.DB = new BoundingBox(this.x, this.y, 20 * this.scale, 15.5 * this.scale);
+        }
+    }
+
+    updatelastDB() {
+        this.lastDB = this.DB;
+    }
+    
+    updateAB() {
+        if (this.state === 2) {
+            if(this.facing === 0) { // left
+                this.AB = new BoundingBox(this.x, this.y + 6 * this.scale, 25 * this.scale, 5 * this.scale);
+            } else {
+                this.AB = new BoundingBox(this.x + 10 * this.scale, this.y + 6 * this.scale, 25 * this.scale, 5 * this.scale);
+            }
+        } else {
+            this.AB = new BoundingBox(this.x, this.y, 0, 0);
+        }
+    }
+
+    updateLastAB() {
+        this.lastAB = this.lastAB;
+    }
+
+    update() {        
         if(this.currentHealth <= 0) {
             this.state = 4;
             this.dead = true;
         }
 
         const TICK = this.game.clockTick;
-
-        this.elapsedTimeAttack += TICK;
     
         // Update elapsed time for animations
         if (this.state !== 0) {
+            
             this.elapsedTime += TICK;
 
+            this.elapsedTimeAttack += TICK;
+            
             if(this.dead && this.animations[this.facing][this.state].totalTime <= this.elapsedTime) 
             {
                 this.removeFromWorld = true; // death animation has played, remove from world
@@ -101,25 +140,51 @@ class Frog {
         this.velocity.x = 0;
 
         if(!this.dead) {
-
             // Frog faces Naruto 
             if (this.game.camera.naruto.x < this.x){
                 this.facing = 0;
             } else {
                 this.facing = 1;
             }
+        }
 
-            // insert back here
+            if(this.state !== 2 && this.state !== 3 & this.state !== 4) {
+                // if Naruto is within visualRadius, frog will follow 
+                if (this.BC.canSee(this.BC, this.game.naruto.BC) && (this.x > this.game.naruto.x) && (this.x - this.game.naruto.x >= 1) && !(this.BC.collide(this.BC, this.game.naruto.BC))) {
+                    this.velocity.x -= this.speed;
+                    if (this.state !== 3) {
+                        this.state = 1;
+                    }
+                } else if (this.BC.canSee(this.BC, this.game.naruto.BC) && (this.x < this.game.naruto.x) && (this.x - this.game.naruto.x <= 1) && !(this.BC.collide(this.BC, this.game.naruto.BC))) {
+                    this.velocity.x += this.speed;
+                    if(this.state !== 3) {
+                        this.state = 1;
+                    }
+                }
+                
+                // Update frog's velocity based on gravity
+                this.velocity.y += this.fallAcc * TICK;
+                
+                // Update frog's position based on velocity
+                this.x += this.velocity.x * TICK * PARAMS.SCALE;
+                this.y += this.velocity.y * TICK * PARAMS.SCALE;
+            } else {
+                this.velocity.y += this.fallAcc * TICK;
+                this.y += this.velocity.y * TICK * PARAMS.SCALE;
+            }
+
+            this.updateBB();
         
             // Handle collision with ground
             var that = this;
             this.game.entities.forEach((entity) => {
                 if (entity.BB && this.BB.collide(entity.BB)) {
-                    if (entity instanceof Ground) {
+                    if (entity instanceof Ground || entity instanceof Platform) {
                         if ((this.lastBB.bottom <= entity.BB.top)) {
                             this.y = entity.BB.top - this.BB.height;
                             // Update bounding box
-                            this.updateBB();
+                            that.updateLastBB();
+                            that.updateBB();
                             // Reset vertical velocity
                             this.velocity.y = 0;
                         }
@@ -132,56 +197,36 @@ class Frog {
                             this.x = entity.BB.right;
                         }
 
+                        that.updateLastBB();
                         that.updateBB();
                     }
 
-                    if (entity instanceof Naruto && canSee(this, entity) && this.BB.collide(entity.BB) && !entity.dead) {
+                    if (entity instanceof Naruto && this.BC.canSee(this.BC, entity.BC) && !entity.dead) {
                         if (this.state === 0 || this.state === 1) {
                             this.state = 2;
+                            this.elapsedTimeAttack += TICK;
                             this.elapsedTime = 0;
-                        } else if (this.elapsedTimeAttack > 0.8) {
+                        } else if (this.state === 2 && this.elapsedTimeAttack >= 0.60 && this.AB.collide(entity.DB) && entity.state !== 6) {
                             entity.state = 6;
                             entity.currentHealth -= 1;
                             this.elapsedTimeAttack = 0;
                         }
 
-                        that.updateBB();
                         }
-                    }
+                    } 
                 });   
 
-                if(this.state !== 2 && this.state !== 3 && this.state !== 4) {
-                    // if Naruto is within visualRadius, frog will follow 
-                    if (canSee(this, this.game.naruto) && (this.x > this.game.naruto.x) && (this.x - this.game.naruto.x >= 1)) {
-                        this.velocity.x -= this.speed;
-                        if(this.state !== 2) {
-                            this.state = 1;
-                        }
-                    } else if (canSee(this, this.game.naruto) && (this.x < this.game.naruto.x) && (this.x - this.game.naruto.x <= 1)) {
-                        this.velocity.x += this.speed;
-                        if(this.state !== 2) {
-                             this.state = 1;
-                        }
-                    }
-        
-                    // Update frog's velocity based on gravity
-                    this.velocity.y += this.fallAcc * TICK;
-                    
-                    // Update frog's position based on velocity
-                    this.x += this.velocity.x * TICK * PARAMS.SCALE;
-                    this.y += this.velocity.y * TICK * PARAMS.SCALE;
-                } else {
-                    this.velocity.y += this.fallAcc * TICK;
-                    this.y += this.velocity.y * TICK * PARAMS.SCALE;
-                }
+            // Update bounding boxes
+            this.updateLastBB();
+            this.updateBB();
 
-                // Update bounding boxes
-                this.updateLastBB();
-                this.updateBB();
-        }  
+            this.updatelastDB();
+            this.updateDB();
+            this.updateLastAB();
+            this.updateAB();
+            this.updateCircle();
     }
     
-
     draw(ctx) {
 
         this.animations[this.facing][this.state].drawFrame(this.game.clockTick, ctx, this.x - this.game.camera.x, this.y - this.game.camera.y, this.scale);
@@ -191,23 +236,25 @@ class Frog {
         }
         
         if (PARAMS.DEBUG) {
-            ctx.strokeStyle = "Red";
-            ctx.beginPath();
-            ctx.arc(this.x - this.game.camera.x, this.y - this.game.camera.y, this.radius, 0, 2 * Math.PI);
-            ctx.closePath();
-            ctx.stroke();
-
-            ctx.setLineDash([5, 15]);
-            ctx.beginPath();
-            ctx.arc(this.x - this.game.camera.x, this.y - this.game.camera.y, this.visualRadius, 0, 2 * Math.PI);
-            ctx.closePath();
-            ctx.stroke();
-            ctx.setLineDash([]);
-        }
-
-        if (PARAMS.DEBUG) {
-            ctx.strokeStyle = 'Red';
-            ctx.strokeRect(this.BB.x - this.game.camera.x - this.game.camera.y, this.BB.y, this.BB.width, this.BB.height);
+                       // BC - BoundingCircle
+                       ctx.strokeStyle = "Red";
+                       ctx.beginPath();
+                       ctx.arc(this.BC.x - this.game.camera.x, this.BC.y - this.game.camera.y, this.BC.radius, 0, 2 * Math.PI);
+                       ctx.closePath();
+                       ctx.stroke();
+           
+                       // DB
+                       ctx.strokeStyle = "Blue";
+                       ctx.strokeRect(this.DB.x - this.game.camera.x, this.DB.y - this.game.camera.y, this.DB.width, this.DB.height);
+           
+                       // AB
+                       if(this.AB) {
+                       ctx.strokeStyle = "Yellow";
+                       ctx.strokeRect(this.AB.x - this.game.camera.x, this.AB.y - this.game.camera.y, this.AB.width, this.AB.height);
+                       }
+                       // BB - BoundingBox
+                       // ctx.strokeStyle = "Purple";
+                       // ctx.strokeRect(this.BB.x - this.game.camera.x, this.BB.y - this.game.camera.y, this.BB.width, this.BB.height);
         }
     };
 }

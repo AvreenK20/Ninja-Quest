@@ -8,35 +8,24 @@ class HealthBar {
     };
 
     draw(ctx) {
-            var ratio = this.agent.currentHealth / this.agent.maxHealth;
-            ctx.strokeStyle = "Black";
-            ctx.fillStyle = ratio < 0.2 ? "Red" : ratio < 0.5 ? "Yellow" : "Green";
-            ctx.fillRect(this.agent.x - this.agent.game.camera.x, this.agent.y  - this.agent.game.camera.y + this.agent.radius + 5, this.agent.radius * 2 * ratio, 4);
-            ctx.strokeRect(this.agent.x - this.agent.game.camera.x, this.agent.y  - this.agent.game.camera.y + this.agent.radius + 5, this.agent.radius * 2, 4);
-    };
-};
-
-class Score {
-    constructor(game, x, y, score) {
-        Object.assign(this, { game, x, y, score });
-
-        this.velocity = -32;
-        this.elapsed = 0;
-    };
-
-    update() {
-        this.elapsed += this.game.clockTick;
-        if (this.elapsed > 1) this.removeFromWorld = true;
-
-        this.y += this.game.clockTick * this.velocity;
-    };
-
-    draw(ctx) {
-        var offset = this.score < 10 ? 6 : 12;
-        ctx.font = 'Bold 12px Arial';
-        ctx.fillStyle = "Black";
-        ctx.fillText(this.score, this.x - offset + 1 - this.game.camera.x, this.y - this.game.camera.y+ 1);
-        ctx.fillStyle = "rgb(183, 3, 3)";
-        ctx.fillText(this.score, this.x - offset - this.game.camera.x, this.y - this.game.camera.y);
+        if(this.agent instanceof Naruto) {
+            for(var i = 0; i < this.agent.currentHealth; i++) {
+                // ctx.drawImage(ASSET_MANAGER.getAsset("./sprites/hearts.png"), 18, 39, 19, 18, i * PARAMS.BLOCKWIDTH / 2, 1 * PARAMS.SCALE, PARAMS.BLOCKWIDTH * 1.05 / 2, PARAMS.BLOCKWIDTH / 2); // {source x, source y, width, height (SPRITESHEET)}, {position x, position y, size x, size y (CANVAS)}
+                ctx.drawImage(ASSET_MANAGER.getAsset("./sprites/hearts_inside.png"), 18, 39, 19, 18, i * PARAMS.BLOCKWIDTH / 2, 1 * PARAMS.SCALE, PARAMS.BLOCKWIDTH * 1.05 / 2, PARAMS.BLOCKWIDTH / 2); // {source x, source y, width, height (SPRITESHEET)}, {position x, position y, size x, size y (CANVAS)}
+                ctx.drawImage(ASSET_MANAGER.getAsset("./sprites/hearts_outside.png"), 18, 39, 19, 18, i * PARAMS.BLOCKWIDTH / 2, 1 * PARAMS.SCALE, PARAMS.BLOCKWIDTH * 1.05 / 2, PARAMS.BLOCKWIDTH / 2); // {source x, source y, width, height (SPRITESHEET)}, {position x, position y, size x, size y (CANVAS)}
+            }
+            for(var j = this.agent.currentHealth; j < this.agent.maxHealth; j++) {
+                ctx.drawImage(ASSET_MANAGER.getAsset("./sprites/hearts_outside.png"), 18, 39, 19, 18, j * PARAMS.BLOCKWIDTH / 2, 1 * PARAMS.SCALE, PARAMS.BLOCKWIDTH * 1.05 / 2, PARAMS.BLOCKWIDTH / 2); // {source x, source y, width, height (SPRITESHEET)}, {position x, position y, size x, size y (CANVAS)}
+            }
+        } else {
+            for(var i = 0; i < this.agent.currentHealth; i++) {
+                ctx.drawImage(ASSET_MANAGER.getAsset("./sprites/hearts.png"), 18, 39, 19, 18, this.agent.x + i * PARAMS.BLOCKWIDTH / 4 - this.agent.game.camera.x, this.agent.y - this.agent.game.camera.y - 8.3 * this.agent.scale, PARAMS.BLOCKWIDTH * 1.05 / 4, PARAMS.BLOCKWIDTH / 4); // {source x, source y, width, height (SPRITESHEET)}, {position x, position y, size x, size y (CANVAS)}
+            }
+            // var ratio = this.agent.currentHealth / this.agent.maxHealth;
+            // ctx.strokeStyle = "Black";
+            // ctx.fillStyle = ratio < 0.2 ? "Red" : ratio < 0.5 ? "Yellow" : "Green";
+            // ctx.fillRect(this.agent.x - this.agent.game.camera.x, this.agent.y  - this.agent.game.camera.y + this.agent.BC.radius + 5, this.agent.BC.radius * 2 * ratio, 4);
+            // ctx.strokeRect(this.agent.x - this.agent.game.camera.x, this.agent.y  - this.agent.game.camera.y + this.agent.BC.radius + 5, this.agent.BC.radius * 2, 4);
+        }
     };
 };

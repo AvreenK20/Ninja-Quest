@@ -1,7 +1,7 @@
 class Background {
     constructor(game, x, y) {
         Object.assign(this, { game, x, y });
-        this.spritesheet = ASSET_MANAGER.getAsset("./sprites/background.png");
+        this.spritesheet = ASSET_MANAGER.getAsset("./sprites/setting/background.png");
         this.width = 1500; // Width of the background image
     }
 
@@ -24,7 +24,7 @@ class Trunk {
     constructor(game, x, y, size) {
         Object.assign(this, { game, x, y, size});
 
-        this.spritesheet = ASSET_MANAGER.getAsset("./sprites/scenery.png");
+        this.spritesheet = ASSET_MANAGER.getAsset("./sprites/setting/scenery.png");
     };
 
     update() {
@@ -40,7 +40,7 @@ class Branch {
     constructor(game, x, y, size) {
         Object.assign(this, { game, x, y, size});
 
-        this.spritesheet = ASSET_MANAGER.getAsset("./sprites/scenery.png");
+        this.spritesheet = ASSET_MANAGER.getAsset("./sprites/setting/scenery.png");
 
         this.BB = new BoundingBox(this.x, this.y + 18 * this.size, PARAMS.BLOCKWIDTH * this.size , 20 * this.size);
     };
@@ -63,7 +63,7 @@ class Leaf {
     constructor(game, x, y, size, color) {
         Object.assign(this, { game, x, y, size, color});
 
-        this.spritesheet = ASSET_MANAGER.getAsset("./sprites/scenery.png");
+        this.spritesheet = ASSET_MANAGER.getAsset("./sprites/setting/scenery.png");
     };
 
     update() {

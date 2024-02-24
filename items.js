@@ -95,3 +95,218 @@ class Cat {
         }
     };
 }
+
+// Food Pill that gives Naruto one health point
+class Pill {
+    constructor(game, x, y, scale) {
+        Object.assign(this, { game, x, y, scale });
+
+        this.spritesheet = ASSET_MANAGER.getAsset("./sprites/pills.png");
+
+        this.fallAcc = 562.5;
+        this.velocity = { x: 0, y: 0 };
+
+        this.updateBB();
+        this.animations = [];
+        this.animations.push(new Animator(this.spritesheet, 0, 0, 10, 10, 2, 0.2, 0, false, true, false));
+        this.elapsedTime = 0;
+    };
+
+    updateLastBB() {
+        this.lastBB = this.BB;
+    }
+
+    updateBB() {
+        this.BB = new BoundingBox(this.x, this.y, 10 * this.scale, 10 * this.scale);
+    }
+
+    update() {
+
+        const TICK = this.game.clockTick;  
+    
+        const RUN_FALL = 2025;
+        const RUN_FALL_A = 562.5;
+
+        this.velocity.x = 0;
+
+        if (this.fallAcc === RUN_FALL) {
+            this.velocity.y -= (RUN_FALL - RUN_FALL_A) * TICK;
+        }
+
+        this.velocity.y += this.fallAcc * TICK;
+        this.y += this.velocity.y * TICK * PARAMS.SCALE;
+
+        this.updateLastBB();
+        this.updateBB();
+        
+        var that = this;
+        this.game.entities.forEach((entity) => {
+            if (entity.BB && this.BB.collide(entity.BB)) {
+                    if (entity instanceof Ground || entity instanceof Brick || entity instanceof Dirt || entity instanceof Branch) { // was above last tick
+                        if ((this.lastBB.bottom <= entity.BB.top)) {
+                            this.y = entity.BB.top - this.BB.height;
+                            this.velocity.y = 0;
+                            that.updateLastBB();
+                            that.updateBB();
+                        } 
+
+                        if ((this.lastBB.right <= entity.BB.left)) {
+                            this.x = entity.BB.left - this.BB.width;
+                            that.updateLastBB();
+                            that.updateBB();
+                        }
+
+                        if (this.lastBB.left >= entity.BB.right) {
+                            this.x = entity.BB.right;
+                            that.updateLastBB();
+                            that.updateBB();
+                        }
+
+                        that.updateLastBB();
+                        that.updateBB();
+                    
+                    } else if (entity instanceof Platform) {
+
+                        if ((this.lastBB.bottom <= entity.BB.top)) {
+
+                            this.y = entity.BB.top - this.BB.height;
+                            this.x = entity.BB.right - entity.BB.width / 2 - this.BB.width / 2.5;
+
+                            this.velocity.y = 0;
+
+                            that.updateLastBB();
+                            that.updateBB();
+                        } 
+
+                    } else if (entity instanceof Naruto) {
+                        if(entity.currentHealth < entity.maxHealth) {
+                            entity.currentHealth++;
+                            this.game.addEntity(new Particle(this.game, "pink", 0.5));
+                            this.removeFromWorld = true;
+                        }
+                    }
+                }
+            });          
+        }
+
+    draw(ctx) {
+        this.animations[0].drawFrame(this.game.clockTick, ctx, this.x - this.game.camera.x, this.y - this.game.camera.y, this.scale);
+
+         //drawing the hitbox of the attack animation
+         if (PARAMS.DEBUG) {
+            ctx.strokeStyle = 'Red';
+            ctx.strokeRect(this.BB.x - this.game.camera.x, this.BB.y - this.game.camera.y, this.BB.width, this.BB.height);
+        }
+    };
+};
+
+class Particle {
+    constructor(game, color, scale) {
+        Object.assign(this, { game, color, scale });
+
+        this.spritesheet = ASSET_MANAGER.getAsset("./sprites/particles_" + color + ".png");
+
+        this.animations = [];
+        this.animations.push(new Animator(this.spritesheet, 0, 0, 175, 180, 7, 0.2, 0, false, true, false));
+        this.elapsedTime = 0;
+    };
+
+
+    update() {
+
+        const TICK = this.game.clockTick;  
+    
+        this.elapsedTime += TICK;
+
+        if(this.elapsedTime >= 1.4) {
+            this.removeFromWorld = true;    
+        }     
+    }
+
+    draw(ctx) {
+        this.animations[0].drawFrame(this.game.clockTick, ctx, this.game.naruto.x - this.game.camera.x, this.game.naruto.y - this.game.camera.y, this.scale);
+    };
+};
+
+class Kunai {
+    constructor(game, x, y) {
+        Object.assign(this, { game, x, y});
+
+        // spritesheet
+        this.spritesheet = ASSET_MANAGER.getAsset("./sprites/naruto.png");
+        this.facing = this.game.naruto.facing;
+
+        if(this.facing === 0) { // left
+            this.x -= this.game.naruto.BB.width / 6;
+            this.velocity = { x: -10, y: 1 };
+
+        } else { // right
+            this.x += this.game.naruto.BB.width / 2;
+            this.velocity = { x: 10, y: 1 };
+        }
+
+        this.y += this.game.naruto.BB.height / 2;
+
+        this.scale = 3;
+
+        this.elapsedTime = 0;
+        this.animations = [];
+
+        // this.animations[0] = new Animator(this.spritesheet, 71.5,  60,  13, 10, 2, 0.1, 0, false, true, false);
+
+        this.updateBB();
+        this.updateAB();
+        this.loadAnimations();
+    };
+
+    loadAnimations() {
+        for (var i = 0; i < 2; i++) { // 2 directions
+            this.animations.push([]);
+        }
+
+        this.animations[0] = new Animator(this.spritesheet, 75,  82.5,  18, 7, 1, 0.1, 0, false, true, true);
+        this.animations[1] = new Animator(this.spritesheet, 75,  82.5,  18, 7, 1, 0.1, 0, false, true, false);
+    }
+
+    update() {
+        this.x += this.velocity.x;
+        this.y += this.velocity.y;
+
+        this.updateLastBB();
+        this.updateBB();
+        this.updateAB();
+
+        for (var i = 0; i < this.game.entities.length; i++) {
+            var entity = this.game.entities[i];
+            if (entity instanceof Frog && this.AB.collide(entity.DB) && entity.state !== 3) {
+                entity.state = 3;
+                entity.currentHealth -= 1;
+                this.removeFromWorld = true;
+            } else if (!(entity instanceof Naruto) && !(entity instanceof Kunai) && !(entity instanceof Beam) && entity.BB && this.lastBB.collide(entity.BB)) {
+                    this.removeFromWorld = true;
+                }
+            }
+        }
+    
+
+    updateLastBB() {
+        this.lastBB = this.BB;
+    }
+
+    updateBB() {
+        this.BB = new BoundingBox(this.x, this.y, 18 * this.scale, 5 * this.scale);
+    };
+
+    updateAB() {
+        this.AB = new BoundingBox(this.x, this.y, 18 * this.scale, 7 * this.scale);
+    }
+
+    draw(ctx) { 
+        this.animations[this.facing].drawFrame(this.game.clockTick, ctx, this.x - this.game.camera.x , this.y - this.game.camera.y, this.scale);
+
+        if (PARAMS.DEBUG) {
+            ctx.strokeStyle = 'Red';
+            ctx.strokeRect(this.BB.x - this.game.camera.x, this.BB.y, this.BB.width, this.BB.height);
+        }
+    }
+}

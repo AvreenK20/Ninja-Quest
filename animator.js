@@ -13,7 +13,7 @@ class Animator {
 
         if (this.isDone()) {
             if (this.loop) {
-                this.elapsedTime -= this.totalTime;
+                this.elapsedTime = 0;
             } else {
                 return 
             }

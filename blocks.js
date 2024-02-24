@@ -5,7 +5,7 @@ class Ground { // Always has two Edge Blocks (One on its left, one on its right)
     constructor(game, x, y, w) {
         Object.assign(this, { game, x, y, w });
 
-        this.spritesheet = ASSET_MANAGER.getAsset("./sprites/scenery.png");
+        this.spritesheet = ASSET_MANAGER.getAsset("./sprites/setting/scenery.png");
 
         this.BB = new BoundingBox(this.x - PARAMS.BLOCKWIDTH, this.y, this.w + PARAMS.BLOCKWIDTH * 2, PARAMS.BLOCKWIDTH);
     };
@@ -29,7 +29,7 @@ class Brick {
     constructor(game, x, y, w) {
         Object.assign(this, { game, x, y, w });
 
-        this.spritesheet = ASSET_MANAGER.getAsset("./sprites/scenery.png");
+        this.spritesheet = ASSET_MANAGER.getAsset("./sprites/setting/scenery.png");
 
         this.BB = new BoundingBox(this.x, this.y, this.w, PARAMS.BLOCKWIDTH);
     };
@@ -53,7 +53,7 @@ class Dirt {
     constructor(game, x, y, w, type) {
         Object.assign(this, { game, x, y, w, type });
 
-        this.spritesheet = ASSET_MANAGER.getAsset("./sprites/scenery.png");
+        this.spritesheet = ASSET_MANAGER.getAsset("./sprites/setting/scenery.png");
 
         this.BB = new BoundingBox(this.x, this.y, this.w, PARAMS.BLOCKWIDTH);
     };
@@ -85,7 +85,7 @@ class Edge {
     constructor(game, x, y, type) {
         Object.assign(this, { game, x, y, type });
 
-        this.spritesheet = ASSET_MANAGER.getAsset("./sprites/scenery.png");
+        this.spritesheet = ASSET_MANAGER.getAsset("./sprites/setting/scenery.png");
 
         this.BB = new BoundingBox(this.x, this.y, PARAMS.BLOCKWIDTH, PARAMS.BLOCKWIDTH);
     };
@@ -118,7 +118,7 @@ class Edge {
 class Platform {
     constructor(game, x, y, w, scale, type, moving, direction, speed) {
         Object.assign(this, { game, x, y, w, scale, type, moving, direction, speed });
-        this.spritesheet = ASSET_MANAGER.getAsset("./sprites/scenery.png");
+        this.spritesheet = ASSET_MANAGER.getAsset("./sprites/setting/scenery.png");
 
         this.updateBB();
         this.tracker = 0;
@@ -127,7 +127,6 @@ class Platform {
 
     update() {
         if (this.moving) {
-            console.log(this.speed);
             this.x += this.speed * this.game.clockTick * this.direction;
             this.tracker += this.speed * this.game.clockTick;
 
@@ -170,7 +169,7 @@ class Beam {
     constructor(game, x, y, w, scale, type) {
         Object.assign(this, { game, x, y, w, scale, type });
 
-        this.spritesheet = ASSET_MANAGER.getAsset("./sprites/scenery.png");
+        this.spritesheet = ASSET_MANAGER.getAsset("./sprites/setting/scenery.png");
 
         this.BB = new BoundingBox(this.x, this.y, PARAMS.BLOCKWIDTH / 4, this.w * this.scale);
     };

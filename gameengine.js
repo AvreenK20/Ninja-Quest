@@ -20,9 +20,9 @@ class GameEngine {
         this.right = false;
         this.up = false;
         this.down = false;
-        this.q = false;
-        this.e = false;
-        this.spacebar = false;
+        this.attack = false;
+        this.throw = false;
+        this.throw2 = false;
 
         // Options and the Details
         this.options = options || {
@@ -51,7 +51,7 @@ class GameEngine {
 
     //load listeners that we expect from the user.
     startInput() {
-     
+        let that = this;
         const getXandY = e => ({
             x: e.clientX - this.ctx.canvas.getBoundingClientRect().left,
             y: e.clientY - this.ctx.canvas.getBoundingClientRect().top
@@ -59,33 +59,66 @@ class GameEngine {
         
         this.ctx.canvas.addEventListener("mousemove", e => {
             if (this.options.debugging) {
-                console.log("MOUSE_MOVE", getXandY(e));
+                // console.log("MOUSE_MOVE", getXandY(e));
             }
             this.mouse = getXandY(e);
         });
 
         this.ctx.canvas.addEventListener("click", e => {
             if (this.options.debugging) {
-                console.log("CLICK", getXandY(e));
+                // console.log("CLICK", getXandY(e));
+                
             }
             this.click = getXandY(e);
         });
-
-        this.ctx.canvas.addEventListener("wheel", e => {
+        this.ctx.canvas.addEventListener("mousedown", e => {
             if (this.options.debugging) {
-                console.log("WHEEL", getXandY(e), e.wheelDelta);
+                // console.log("MOUSE_MOVE", getXandY(e));
             }
-            e.preventDefault(); // Prevent Scrolling
-            this.wheel = e;
+            this.mouse = getXandY(e);
+            switch (e.which) {
+                case 1:
+                    //alert('Left Mouse button click.');
+                    this.throw2 = true;
+
+                    break;
+                case 2:
+                    //alert('Middle Mouse button release.');
+                    break;
+                case 3:
+                    //alert('Right Mouse button release.');
+                     break;
+        
+                }
+            // console.log("left click", getXandY(e));
+          
         });
 
-        this.ctx.canvas.addEventListener("contextmenu", e => {
+
+
+        //release mouse click
+        this.ctx.canvas.addEventListener("mouseup", e => {
             if (this.options.debugging) {
-                console.log("RIGHT_CLICK", getXandY(e));
+                // console.log("CLICK", getXandY(e));
             }
-            e.preventDefault(); // Prevent Context Menu
-            this.rightclick = getXandY(e);
-        });
+        
+            this.click = getXandY(e);
+            // console.log("CLICK Release", getXandY(e));
+        
+            switch (e.which) {
+                case 1:
+                    //alert('Left Mouse button release.');
+                    that.throw2 = false;
+                    break;
+                case 2:
+                    //alert('Middle Mouse button release.');
+                    break;
+                case 3:
+                    //alert('Right Mouse button release.');
+                     break;
+        
+                }
+            });
         
         
         //The this keyword refers to the local function unless that function is attached to that class. Like the constructor will refer to the current class.
@@ -105,12 +138,6 @@ class GameEngine {
                     break;
                 case"KeyP":
                     this.attack = true;
-                    break;
-                case"KeyL":
-                    this.damage = true;
-                    break;    
-                case "KeyK":
-                    this.dead = true;
                     break;
                 case "KeyO":
                     this.throw = true;
@@ -135,12 +162,6 @@ class GameEngine {
                 case"KeyP":
                     this.attack = false;
                     break;
-                case"KeyL":
-                    this.damage = false;
-                    break;
-                case "KeyK":
-                    this.dead = false;
-                    break;
                 case "KeyO":
                     this.throw = false;
                     break;
@@ -151,19 +172,6 @@ class GameEngine {
     addEntity(entity) {
         this.entities.push(entity);
     };
-
-    // old method?
-    // draw() {
-    //     // Clear the whole canvas with transparent color (rgba(0, 0, 0, 0))
-    //     this.ctx.clearRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
-
-    //     // Draw latest things first
-    //     for (let i = 0; i < this.entities.length - 1; i++) {
-    //         this.entities[i].draw(this.ctx, this);
-    //     }
-
-    //     this.camera.update();
-    // };
 
     draw() {
         this.ctx.clearRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);

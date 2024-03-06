@@ -27,6 +27,13 @@ class Naruto {
         this.elapsedTime = 0; // time since animation per action begins
         this.elapsedTimeAttack = 0; // duration for attack
         this.elapsedTimeThrowKunai = 0.6; // duration for kunai being thrown
+        this.elapsedTimeThrowShuriken = 0.6; // duration for kunai being thrown
+
+        this.shurikenCount = 5;
+        this.kunaiCount = 5;
+
+        this.throwShuriken = false;
+        this.throwKunai = false;
 
         this.updateBB(); // bounding box
         this.updateDB(); // damage box (character takes damage)
@@ -176,9 +183,9 @@ class Naruto {
                 this.elapsedTime += TICK;
                 this.elapsedTimeAttack += TICK;
 
-                if(this.state === 5) {
-                    this.elapsedTimeThrowKunai += TICK;
-                }
+                this.elapsedTimeThrowKunai += TICK;
+                this.elapsedTimeThrowShuriken += TICK;
+                
 
                 if(this.animations[this.facing][this.state].totalTime <= this.elapsedTime) {
                     this.animations[this.facing][this.state].elapsedTime = 0; // reset animation?
@@ -237,15 +244,33 @@ class Naruto {
                 this.velocity.x = 0;
             }
 
-            if(this.game.throw) {
+            if(this.game.throw && this.shurikenCount > 0) {
                 this.state = 5;
                 this.velocity.x = 0;
+                this.throwShuriken = true;
             }
 
-            if (this.elapsedTimeThrowKunai >= 0.6) {
-                if (this.state === 5 && this.elapsedTimeThrowKunai > this.animations[this.facing][5].totalTime - 0.01) {
-                    this.game.addEntity(new Kunai(this.game, this.x, this.y));
+            if(this.game.throw2 && this.kunaiCount > 0) {
+                this.state = 5;
+                this.velocity.x = 0;
+                this.throwKunai = true;
+            }
+
+            if (this.elapsedTimeThrowShuriken >= 0.6 && this.throwShuriken) {
+                if (this.state === 5 && this.animations[this.facing][5].currentFrame() === 1) {
+                    this.game.addEntity(new Shuriken(this.game, this.x, this.y));
+                    this.shurikenCount--;
+                    this.elapsedTimeThrowShuriken = 0;
+                    this.throwShuriken = false;
+                }
+            }
+
+            if (this.elapsedTimeThrowKunai >= 0.6 && this.throwKunai) {
+                if (this.state === 5 && this.animations[this.facing][5].currentFrame() === 1) {
+                    this.game.addEntity(new Kunai(this.game, this.x, this.y, this.game.mouse.x + this.game.camera.x, this.game.mouse.y + this.game.camera.y));
+                    this.kunaiCount--;
                     this.elapsedTimeThrowKunai = 0;
+                    this.throwKunai = false;
                 }
             }
 
@@ -291,7 +316,7 @@ class Naruto {
                                 this.velocity.y = 0;
 
                             } else if ((entity instanceof Dirt || entity instanceof Edge) && (this.lastBB.top >= entity.BB.bottom)) { // nartuo cannot jump through dirt
-                                this.y = entity.BB.bottom + 20 * this.scale;
+                                this.y = entity.BB.bottom;
                                 this.velocity.y = 0;
                                 this.grounded = false;
                             } else { // naruto is not on the ground 
@@ -308,12 +333,24 @@ class Naruto {
 
                             that.updateBB();
                         } 
+                        else if (entity instanceof Shuriken) {
+                            if(entity.stuck) {
+                                this.shurikenCount++;
+                                entity.removeFromWorld = true;
+                            }
+                        }
+                        else if (entity instanceof Kunai) {
+                            if(entity.stuck) {
+                                this.kunaiCount++;
+                                entity.removeFromWorld = true;
+                            }
+                        }
                         else if (entity instanceof Cat) {
                             if(entity.chosenOne) {
                                 this.gameWin = true;
                             }
                         }
-
+                        
                         that.updateBB();
                     }
                     if (entity instanceof Frog) {
@@ -341,6 +378,15 @@ class Naruto {
 
     draw(ctx) { 
         this.animations[this.facing][this.state].drawFrame(this.game.clockTick, ctx, this.x - this.game.camera.x, this.y - this.game.camera.y, this.scale);
+        
+        // Shuriken Tracker  (Top Right of Canvas)
+        ctx.drawImage(ASSET_MANAGER.getAsset("./sprites/naruto.png"), 71.5, 60, 13, 10, PARAMS.CANVAS_WIDTH - PARAMS.BLOCKWIDTH / 1.2, PARAMS.BLOCKWIDTH / 8, 13 * this.scale, 10 * this.scale); // {source x, source y, width, height (SPRITESHEET)}, {position x, position y, size x, size y (CANVAS)}
+        ctx.font = "32px PixelFont";
+        ctx.fillText("x" + this.shurikenCount + "", PARAMS.CANVAS_WIDTH - PARAMS.BLOCKWIDTH / 2.5, PARAMS.BLOCKWIDTH / 2.5);
+
+        ctx.drawImage(ASSET_MANAGER.getAsset("./sprites/naruto.png"), 75, 82.5,  18, 7,  PARAMS.CANVAS_WIDTH - PARAMS.BLOCKWIDTH * 2, PARAMS.BLOCKWIDTH / 5, 18 * this.scale, 7 * this.scale); // {source x, source y, width, height (SPRITESHEET)}, {position x, position y, size x, size y (CANVAS)}
+        ctx.font = "32px PixelFont";
+        ctx.fillText("x" + this.kunaiCount + "", PARAMS.CANVAS_WIDTH - PARAMS.BLOCKWIDTH / 0.75, PARAMS.BLOCKWIDTH / 2.5);
 
         if(!this.dead) {
             this.healthbar.draw(ctx);

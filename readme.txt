@@ -1,7 +1,10 @@
 CONTROLS:
 
-Use WASD to move
+Use WAD to move
+S to crouch
 P to attack
+O to throw a shuriken
+Left-Click to throw a kunai (where the mouse is located)
 
 -----------------
 

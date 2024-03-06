@@ -89,7 +89,7 @@ var levelOne = {
                ],
 
     cats:     [
-        // { x: 57, y: 0, scale: 5, chosenOne: true}
+         { x: 57, y: 0, scale: 5, chosenOne: true}
                ],
                
     pills:     [{ x: 1.35, y: 6.95, scale: 4},
@@ -103,6 +103,9 @@ var credits = {
     "  Chris Marriot",
     "  Avreen Kaur",
     "  // TODO : Sprite Sheet Credit",
+    "  Naruto : Game - Naruto: Ninja Council (The Spriters Resource)",
+    "  Background and Scenery: Anokolisa (Twitter: @anokolisa)",
+    "  Toxic Frogs (Enemy Entity) : Eduardo Scarpato (Twitter: @eduscarpato)",
     "  TCSS 491 - Winter 2024"
     ]
 }

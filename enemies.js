@@ -67,7 +67,7 @@ class Frog {
         } else if (this.state === 3) {
             this.BB = new BoundingBox(this.x, this.y, 25 * this.scale, 16 * this.scale);
         } else if (this.state === 4) {
-            this.BB = new BoundingBox(this.x, this.y, 25 * this.scale, 20 * this.scale);
+            this.BB = new BoundingBox(this.x, this.y, 25 * this.scale, 19 * this.scale);
         } else {
             this.BB = new BoundingBox(this.x, this.y, 20 * this.scale, 15.5 * this.scale);
         }
@@ -123,8 +123,15 @@ class Frog {
         if (this.state !== 0) {
             
             this.elapsedTime += TICK;
-
             this.elapsedTimeAttack += TICK;
+
+
+            if(this.state === 2) {
+                // this.elapsedTimeAttack += TICK;
+            } else {
+                // this.elapsedTimeAttack = 0;
+                // if set to 0, then naruto could just run past and never take any damage
+            }
             
             if(this.dead && this.animations[this.facing][this.state].totalTime <= this.elapsedTime) 
             {
@@ -148,7 +155,7 @@ class Frog {
             }
         }
 
-            if(this.state !== 2 && this.state !== 3 & this.state !== 4) {
+            if(this.state !== 2 & this.state !== 4) { // if entity shouldnt move when in damage state, include & this.state !== 3
                 // if Naruto is within visualRadius, frog will follow 
                 if (this.BC.canSee(this.BC, this.game.naruto.BC) && (this.x > this.game.naruto.x) && (this.x - this.game.naruto.x >= 1) && !(this.BC.collide(this.BC, this.game.naruto.BC))) {
                     this.velocity.x -= this.speed;
@@ -243,15 +250,14 @@ class Frog {
                        ctx.closePath();
                        ctx.stroke();
            
-                       // DB
+                       // DB - takes damage when hit in this box
                        ctx.strokeStyle = "Blue";
                        ctx.strokeRect(this.DB.x - this.game.camera.x, this.DB.y - this.game.camera.y, this.DB.width, this.DB.height);
            
-                       // AB
-                       if(this.AB) {
+                       // AB - inflicts damage when this box hits another DB
                        ctx.strokeStyle = "Yellow";
                        ctx.strokeRect(this.AB.x - this.game.camera.x, this.AB.y - this.game.camera.y, this.AB.width, this.AB.height);
-                       }
+                
                        // BB - BoundingBox
                        // ctx.strokeStyle = "Purple";
                        // ctx.strokeRect(this.BB.x - this.game.camera.x, this.BB.y - this.game.camera.y, this.BB.width, this.BB.height);

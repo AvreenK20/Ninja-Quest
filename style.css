@@ -1,12 +1,44 @@
 body, html {
+    background-color: rgb(235, 206, 221);
     height: 100%;
     margin: 0;
+    display: -webkit-flex; /* Safari and Chrome */
     display: flex;
+    -webkit-justify-content: center; /* Safari and Chrome */
     justify-content: center;
+    -webkit-align-items: center; /* Safari and Chrome */
     align-items: center;
 }
 
+
 canvas {
     background: white;
-    border: 1px solid black;
+    border: 10px solid black;
 }
+
+.directional-pad {
+    position: absolute;
+    top: 50%;
+    left: 10px;
+    transform: translateY(-50%);
+    display: flex;
+    flex-direction: column;
+  }
+
+  .directional-pad button {
+    width: 40px;
+    height: 40px;
+    margin: 5px;
+    border: 2px solid #333;
+    background-color: #eee;
+    font-size: 16px;
+    font-weight: bold;
+  }
+
+  /* Style to make the plus shape */
+  .directional-pad button:nth-child(1),
+  .directional-pad button:nth-child(2),
+  .directional-pad button:nth-child(3),
+  .directional-pad button:nth-child(5) {
+    visibility: hidden;
+  }

@@ -2,7 +2,7 @@ class Background {
     constructor(game, x, y) {
         Object.assign(this, { game, x, y });
         this.spritesheet = ASSET_MANAGER.getAsset("./sprites/setting/background.png");
-        this.width = 1500; // Width of the background image
+        this.width = 1920; // Width of the background image
     }
 
     update() {

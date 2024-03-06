@@ -229,12 +229,138 @@ class Particle {
 };
 
 class Kunai {
+    constructor(game, x, y, targetX, targetY) {
+        Object.assign(this, { game, x, y, targetX, targetY});
+
+        // spritesheet
+        this.spritesheet = ASSET_MANAGER.getAsset("./sprites/naruto.png");
+
+        if(this.targetX < this.game.naruto.x) {
+            this.facing = 0;
+        } else {
+            this.facing = 1;
+        }
+
+        if(this.facing === 0) { // left
+            this.x -= this.game.naruto.BB.width / 6;
+        } else { // right
+            this.x += this.game.naruto.BB.width / 2;
+        }
+
+        this.y += this.game.naruto.BB.height / 2;
+
+        let dx = targetX - this.x;
+        let dy = targetY - this.y;
+        let distance = Math.sqrt(dx * dx + dy * dy);
+        this.velocity = { 
+            x: (dx / distance) * 10, // Adjust the speed as needed
+            y: (dy / distance) * 10  // Adjust the speed as needed
+        };
+
+        this.rotation = Math.atan2(this.velocity.y, this.velocity.x);
+        this.degrees = (this.rotation * (180 / Math.PI) + 360) % 360;
+
+        console.log(this.degrees);
+
+        this.scale = 3;
+        this.stuck = false;
+
+        this.elapsedTime = 0;
+        this.animations = [];
+
+        this.updateBB();
+        this.updateAB();
+        this.loadAnimations();
+    };
+
+    loadAnimations() {
+        for (var i = 0; i < 2; i++) { // 2 directions
+            this.animations.push([]);
+        }
+
+        this.animations[0] = new Animator(this.spritesheet, 75,  82.5,  18, 7, 1, 0.1, 0, false, true, false);
+    }
+
+    update() {
+        this.x += this.velocity.x;
+        this.y += this.velocity.y;
+
+        this.updateLastBB();
+        this.updateBB();
+        this.updateAB();
+
+        for (var i = 0; i < this.game.entities.length; i++) {
+            var entity = this.game.entities[i];
+            if (entity instanceof Frog && this.AB.collide(entity.DB) && entity.state !== 3 && !entity.dead) {
+                if (!this.stuck) {
+                    entity.state = 3;
+                    entity.currentHealth -= 1;
+                    this.removeFromWorld = true;
+                }
+            } else if (!(entity instanceof Naruto) && !(entity instanceof Frog) && !(entity instanceof Kunai)&& !(entity instanceof Kunai) && !(entity instanceof Beam) && !(entity instanceof Pill) && entity.BB && this.lastBB.collide(entity.BB)) {
+                if ((this.lastBB.top <= entity.BB.bottom)) {
+                    if(!this.stuck) {
+                        this.rotation = Math.atan2(this.velocity.y, this.velocity.x);
+                        this.velocity = { x: 0, y: 0 };
+                        this.stuck = true;
+                    }
+                }
+            }
+                this.updateLastBB();
+                this.updateBB();
+        }
+    }
+    
+    updateLastBB() {
+        this.lastBB = this.BB;
+    }
+
+    updateBB() {
+        // Define the width and height of the bounding box
+        let width = 18 * this.scale; // Adjust as needed
+        let height = 7 * this.scale; // Adjust as needed
+    
+        // Calculate the position of the bounding box to center it around the center of the Kunai
+        let bbX = this.x - width / 2;
+        let bbY = this.y - height / 2;
+    
+        // Update the bounding box
+        this.BB = new BoundingBox(bbX, bbY, width, height);
+    }
+    
+    
+    updateAB() {
+        this.AB = new BoundingBox(this.x, this.y, 18 * this.scale, 7 * this.scale);
+    }
+
+    draw(ctx) { 
+        // this.animations[this.facing].drawFrame(this.game.clockTick, ctx, this.x - this.game.camera.x , this.y - this.game.camera.y, this.scale);
+
+        ctx.save(); // Save the current canvas state
+        // Translate the canvas origin to the Kunai's position
+        ctx.translate(this.x - this.game.camera.x, this.y - this.game.camera.y);        
+        // Rotate the canvas context
+        ctx.rotate(this.rotation);
+        // Draw the Kunai sprite
+        this.animations[0].drawFrame(this.game.clockTick, ctx, 0, 0, this.scale);
+        // Restore the canvas state
+        ctx.restore(); 
+
+        if (PARAMS.DEBUG) {
+            ctx.strokeStyle = 'Red';
+            ctx.strokeRect(this.BB.x - this.game.camera.x, this.BB.y - this.game.camera.y, this.BB.width, this.BB.height);
+        }
+    }
+}
+
+class Shuriken {
     constructor(game, x, y) {
         Object.assign(this, { game, x, y});
 
         // spritesheet
         this.spritesheet = ASSET_MANAGER.getAsset("./sprites/naruto.png");
         this.facing = this.game.naruto.facing;
+        this.stuck = false; // shuriken has collided with object 
 
         if(this.facing === 0) { // left
             this.x -= this.game.naruto.BB.width / 6;
@@ -252,20 +378,17 @@ class Kunai {
         this.elapsedTime = 0;
         this.animations = [];
 
-        // this.animations[0] = new Animator(this.spritesheet, 71.5,  60,  13, 10, 2, 0.1, 0, false, true, false);
-
         this.updateBB();
         this.updateAB();
         this.loadAnimations();
     };
 
     loadAnimations() {
-        for (var i = 0; i < 2; i++) { // 2 directions
+        for (var i = 0; i < 1; i++) { // 1 direction
             this.animations.push([]);
         }
 
-        this.animations[0] = new Animator(this.spritesheet, 75,  82.5,  18, 7, 1, 0.1, 0, false, true, true);
-        this.animations[1] = new Animator(this.spritesheet, 75,  82.5,  18, 7, 1, 0.1, 0, false, true, false);
+        this.animations[0] = new Animator(this.spritesheet, 71.5,  60,  13, 10, 2, 0.1, 0, false, true, false);
     }
 
     update() {
@@ -278,15 +401,25 @@ class Kunai {
 
         for (var i = 0; i < this.game.entities.length; i++) {
             var entity = this.game.entities[i];
-            if (entity instanceof Frog && this.AB.collide(entity.DB) && entity.state !== 3) {
-                entity.state = 3;
-                entity.currentHealth -= 1;
-                this.removeFromWorld = true;
-            } else if (!(entity instanceof Naruto) && !(entity instanceof Kunai) && !(entity instanceof Beam) && entity.BB && this.lastBB.collide(entity.BB)) {
+            if (entity instanceof Frog && this.AB.collide(entity.DB) && entity.state !== 3 && !entity.dead) {
+                if(!this.stuck) {
+                    entity.state = 3;
+                    entity.currentHealth -= 1;
                     this.removeFromWorld = true;
                 }
+            } else if (!(entity instanceof Naruto) && !(entity instanceof Frog) && !(entity instanceof Shuriken) && !(entity instanceof Kunai) && !(entity instanceof Beam) && !(entity instanceof Pill) && entity.BB && this.lastBB.collide(entity.BB)) {
+                if ((this.lastBB.top <= entity.BB.bottom)) {
+                    if(!this.stuck) {
+                        this.animations[0] = new Animator(this.spritesheet, 71.5 + this.animations[0].currentFrame() * 13,  60,  13, 10, 1, 0.1, 0, false, true, false);
+                        this.stuck = true;
+                        this.velocity = { x: 0, y: 0 };
+                    }
+                }
             }
+                this.updateLastBB();
+                this.updateBB();
         }
+     }
     
 
     updateLastBB() {
@@ -294,19 +427,18 @@ class Kunai {
     }
 
     updateBB() {
-        this.BB = new BoundingBox(this.x, this.y, 18 * this.scale, 5 * this.scale);
+        this.BB = new BoundingBox(this.x, this.y, 10 * this.scale, 10 * this.scale);
     };
 
     updateAB() {
-        this.AB = new BoundingBox(this.x, this.y, 18 * this.scale, 7 * this.scale);
+        this.AB = new BoundingBox(this.x, this.y, 10 * this.scale, 10 * this.scale);
     }
 
     draw(ctx) { 
-        this.animations[this.facing].drawFrame(this.game.clockTick, ctx, this.x - this.game.camera.x , this.y - this.game.camera.y, this.scale);
-
+        this.animations[0].drawFrame(this.game.clockTick, ctx, this.x - this.game.camera.x , this.y - this.game.camera.y, this.scale);
         if (PARAMS.DEBUG) {
             ctx.strokeStyle = 'Red';
-            ctx.strokeRect(this.BB.x - this.game.camera.x, this.BB.y, this.BB.width, this.BB.height);
+            ctx.strokeRect(this.BB.x - this.game.camera.x, this.BB.y - this.game.camera.y, this.BB.width, this.BB.height);
         }
     }
 }

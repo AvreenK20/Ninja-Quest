@@ -70,7 +70,7 @@ var levelOne = {
 
     leaves:   [{ x: 4.5, y: -2.5, size: 4, color: "Orange"},
                { x: 2.5, y: -4,   size: 5, color: "Orange"},
-               { x: 2, y: 5.9,   size: 4, color: "Purple"},
+               { x: 2,   y: 5.9,  size: 4, color: "Purple"},
                { x: 6,   y: -4,   size: 5, color: "Orange"},
                { x: 0,   y: 5.5,  size: 5, color: "OrangeBrown"},
                { x: -3,  y: 4.5,  size: 5, color: "Purple"},

@@ -381,12 +381,14 @@ class Naruto {
         
         // Shuriken Tracker  (Top Right of Canvas)
         ctx.drawImage(ASSET_MANAGER.getAsset("./sprites/naruto.png"), 71.5, 60, 13, 10, PARAMS.CANVAS_WIDTH - PARAMS.BLOCKWIDTH / 1.2, PARAMS.BLOCKWIDTH / 8, 13 * this.scale, 10 * this.scale); // {source x, source y, width, height (SPRITESHEET)}, {position x, position y, size x, size y (CANVAS)}
-        ctx.font = "32px PixelFont";
-        ctx.fillText("x" + this.shurikenCount + "", PARAMS.CANVAS_WIDTH - PARAMS.BLOCKWIDTH / 2.5, PARAMS.BLOCKWIDTH / 2.5);
+        ctx.fillStyle = "black"; // Set fill style to black
+        ctx.font = "bold 32px PixelFont"; // Set font to bold 32px PixelFont        
+        ctx.fillText("x" + this.shurikenCount + "", PARAMS.CANVAS_WIDTH - 25, 25);
 
         ctx.drawImage(ASSET_MANAGER.getAsset("./sprites/naruto.png"), 75, 82.5,  18, 7,  PARAMS.CANVAS_WIDTH - PARAMS.BLOCKWIDTH * 2, PARAMS.BLOCKWIDTH / 5, 18 * this.scale, 7 * this.scale); // {source x, source y, width, height (SPRITESHEET)}, {position x, position y, size x, size y (CANVAS)}
-        ctx.font = "32px PixelFont";
-        ctx.fillText("x" + this.kunaiCount + "", PARAMS.CANVAS_WIDTH - PARAMS.BLOCKWIDTH / 0.75, PARAMS.BLOCKWIDTH / 2.5);
+        ctx.fillStyle = "black"; // Set fill style to black
+        ctx.font = "bold 32px PixelFont"; // Set font to bold 32px PixelFont        
+        ctx.fillText("x" + this.kunaiCount + "", PARAMS.CANVAS_WIDTH - 110, 25);
 
         if(!this.dead) {
             this.healthbar.draw(ctx);

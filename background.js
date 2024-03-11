@@ -2,7 +2,8 @@ class Background {
     constructor(game, x, y) {
         Object.assign(this, { game, x, y });
         this.spritesheet = ASSET_MANAGER.getAsset("./sprites/setting/background.png");
-        this.width = 1920; // Width of the background image
+        this.width = 1780; // Width of the background image
+        this.height = 1080;
     }
 
     update() {
@@ -12,12 +13,20 @@ class Background {
     draw(ctx) {
         // Calculate the position to draw the background image
         const drawX = -(this.game.camera.x % this.width);
-
-        // Draw the background image multiple times to cover the canvas width
-        for (let i = drawX; i < PARAMS.CANVAS_WIDTH; i += this.width) {
-            ctx.drawImage(this.spritesheet, i, this.y - this.game.camera.y);
+        const drawY = -(this.game.camera.y % this.spritesheet.height);
+    
+        // Calculate the number of repetitions needed to cover the entire canvas width and height based on Naruto's position
+        const repetitionsX = Math.ceil(PARAMS.CANVAS_WIDTH / this.width) + 1;
+        const repetitionsY = Math.ceil(PARAMS.CANVAS_HEIGHT / this.spritesheet.height) + 1;
+    
+        // Draw the background image multiple times to cover the canvas width and height based on Naruto's position
+        for (let i = 0; i < repetitionsX; i++) {
+            for (let j = 0; j < repetitionsY; j++) {
+                ctx.drawImage(this.spritesheet, Math.floor(drawX + i * this.width), Math.floor(drawY + j * this.spritesheet.height));
+            }
         }
     }
+      
 }
 
 class Trunk {

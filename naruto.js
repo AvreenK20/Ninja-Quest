@@ -12,8 +12,6 @@ class Naruto {
 
         this.speed = 25 * this.scale;
 
-        // this.radius = 10 * this.scale;
-
         this.currentHealth = 10;
         this.maxHealth = 10;
         this.healthbar = new HealthBar(this);
@@ -82,7 +80,7 @@ class Naruto {
         if (this.state === 0) {
             this.BB = new BoundingBox(this.x, this.y, 23.33 * this.scale, 36.67 * this.scale);
         } else if (this.state === 1) {
-            this.BB = new BoundingBox(this.x, this.y + 10 * this.scale, 30 * this.scale, 26.67 * this.scale);
+            this.BB = new BoundingBox(this.x, this.y + 9.5 * this.scale, 30 * this.scale, 26.67 * this.scale);
         } else if (this.state === 2) {
             this.BB = new BoundingBox(this.x, this.y, 28.33 * this.scale, 41 * this.scale);
         } else if (this.state === 3) {
@@ -381,12 +379,14 @@ class Naruto {
         
         // Shuriken Tracker  (Top Right of Canvas)
         ctx.drawImage(ASSET_MANAGER.getAsset("./sprites/naruto.png"), 71.5, 60, 13, 10, PARAMS.CANVAS_WIDTH - PARAMS.BLOCKWIDTH / 1.2, PARAMS.BLOCKWIDTH / 8, 13 * this.scale, 10 * this.scale); // {source x, source y, width, height (SPRITESHEET)}, {position x, position y, size x, size y (CANVAS)}
-        ctx.font = "32px PixelFont";
-        ctx.fillText("x" + this.shurikenCount + "", PARAMS.CANVAS_WIDTH - PARAMS.BLOCKWIDTH / 2.5, PARAMS.BLOCKWIDTH / 2.5);
+        ctx.fillStyle = "black"; // Set fill style to black
+        ctx.font = "bold 32px PixelFont"; // Set font to bold 32px PixelFont        
+        ctx.fillText("x" + this.shurikenCount + "", PARAMS.CANVAS_WIDTH - 25, 25);
 
         ctx.drawImage(ASSET_MANAGER.getAsset("./sprites/naruto.png"), 75, 82.5,  18, 7,  PARAMS.CANVAS_WIDTH - PARAMS.BLOCKWIDTH * 2, PARAMS.BLOCKWIDTH / 5, 18 * this.scale, 7 * this.scale); // {source x, source y, width, height (SPRITESHEET)}, {position x, position y, size x, size y (CANVAS)}
-        ctx.font = "32px PixelFont";
-        ctx.fillText("x" + this.kunaiCount + "", PARAMS.CANVAS_WIDTH - PARAMS.BLOCKWIDTH / 0.75, PARAMS.BLOCKWIDTH / 2.5);
+        ctx.fillStyle = "black"; // Set fill style to black
+        ctx.font = "bold 32px PixelFont"; // Set font to bold 32px PixelFont        
+        ctx.fillText("x" + this.kunaiCount + "", PARAMS.CANVAS_WIDTH - 110, 25);
 
         if(!this.dead) {
             this.healthbar.draw(ctx);

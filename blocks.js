@@ -7,7 +7,7 @@ class Ground { // Always has two Edge Blocks (One on its left, one on its right)
 
         this.spritesheet = ASSET_MANAGER.getAsset("./sprites/setting/scenery.png");
 
-        this.BB = new BoundingBox(this.x - PARAMS.BLOCKWIDTH, this.y, this.w + PARAMS.BLOCKWIDTH * 2, PARAMS.BLOCKWIDTH);
+        this.BB = new BoundingBox(this.x, this.y, this.w, PARAMS.BLOCKWIDTH);
     };
 
     update() {};

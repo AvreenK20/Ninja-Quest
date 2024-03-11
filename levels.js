@@ -72,6 +72,12 @@ var level1 = {
                { x: 55, y: 5, size: 2 },
                { x: 55, y: 6, size: 2 },
                { x: 1.5, y: 9, size: 3 },
+               { x: 1.5, y: 10, size: 3 },
+               { x: 1.5, y: 11, size: 3 },
+               { x: 1.5, y: 12, size: 3 },
+               { x: 1.5, y: 13, size: 3 },
+               { x: 1.5, y: 14, size: 3 },
+               { x: 1.5, y: 15, size: 3 },
                 ],
 
     branches: [{ x: 7.75, y: 2, size: 2 },

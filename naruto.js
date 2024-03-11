@@ -12,8 +12,6 @@ class Naruto {
 
         this.speed = 25 * this.scale;
 
-        // this.radius = 10 * this.scale;
-
         this.currentHealth = 10;
         this.maxHealth = 10;
         this.healthbar = new HealthBar(this);
@@ -82,7 +80,7 @@ class Naruto {
         if (this.state === 0) {
             this.BB = new BoundingBox(this.x, this.y, 23.33 * this.scale, 36.67 * this.scale);
         } else if (this.state === 1) {
-            this.BB = new BoundingBox(this.x, this.y + 10 * this.scale, 30 * this.scale, 26.67 * this.scale);
+            this.BB = new BoundingBox(this.x, this.y + 9.5 * this.scale, 30 * this.scale, 26.67 * this.scale);
         } else if (this.state === 2) {
             this.BB = new BoundingBox(this.x, this.y, 28.33 * this.scale, 41 * this.scale);
         } else if (this.state === 3) {

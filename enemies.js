@@ -23,6 +23,7 @@ class Frog {
         this.speed = 25; // pixels per second
 
         this.updateBB();
+        this.updateLastBB();
         this.updateDB();
         this.updateAB();
         this.updateCircle();
@@ -226,7 +227,6 @@ class Frog {
             // Update bounding boxes
             this.updateLastBB();
             this.updateBB();
-
             this.updatelastDB();
             this.updateDB();
             this.updateLastAB();

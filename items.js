@@ -260,8 +260,6 @@ class Kunai {
         this.rotation = Math.atan2(this.velocity.y, this.velocity.x);
         this.degrees = (this.rotation * (180 / Math.PI) + 360) % 360;
 
-        console.log(this.degrees);
-
         this.scale = 3;
         this.stuck = false;
 

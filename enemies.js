@@ -124,11 +124,11 @@ class Frog {
         if (this.state !== 0) {
             
             this.elapsedTime += TICK;
-            this.elapsedTimeAttack += TICK;
+            // this.elapsedTimeAttack += TICK;
 
 
             if(this.state === 2) {
-                // this.elapsedTimeAttack += TICK;
+                this.elapsedTimeAttack += TICK;
             } else {
                 // this.elapsedTimeAttack = 0;
                 // if set to 0, then naruto could just run past and never take any damage
@@ -214,7 +214,7 @@ class Frog {
                             this.state = 2;
                             this.elapsedTimeAttack += TICK;
                             this.elapsedTime = 0;
-                        } else if (this.state === 2 && this.elapsedTimeAttack >= 0.60 && this.AB.collide(entity.DB) && entity.state !== 6) {
+                        } else if (this.state === 2 && this.elapsedTimeAttack >= 0.60 && this.AB.collide(entity.DB)) { // && entity.state !== 6 (Naruto's Dammage State)
                             entity.state = 6;
                             entity.currentHealth -= 1;
                             this.elapsedTimeAttack = 0;

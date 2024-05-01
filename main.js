@@ -36,7 +36,7 @@ ASSET_MANAGER.downloadAll(() => {
 
 	const canvas = document.getElementById("gameWorld");
 	const ctx = canvas.getContext("2d");
-	ctx.imageSmoothingEnabled = true;
+	//ctx.imageSmoothingEnabled = true;
 
 	PARAMS.CANVAS_WIDTH = canvas.width;
 	PARAMS.CANVAS_HEIGHT = canvas.height;

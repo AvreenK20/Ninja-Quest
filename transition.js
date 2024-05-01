@@ -6,12 +6,13 @@ class TransitionScreen {
         this.context = this.canvas.getContext("2d");
 
         this.gameStarted = false;
-        this.levelType = level;
+        this.levelIndex = 0;
 
         this.isTitleScreen = true;
         this.isControlScreen = false;
         this.isLevelsScreen = false;
         this.isCreditsScreen = false;
+        this.isThatLevelScreen = false;
 
         // START BUTTON
         this.startButton = {
@@ -21,6 +22,16 @@ class TransitionScreen {
 
         this.startButton.x = (PARAMS.CANVAS_WIDTH - this.startButton.width) / 2 - this.startButton.width, // Center horizontally
         this.startButton.y = (PARAMS.CANVAS_HEIGHT - this.startButton.height) - 140, // Center vertically
+
+
+        // PLAY BUTTON
+        this.playButton = {
+            width: PARAMS.CANVAS_WIDTH / 4, // Width of the button
+            height: 50 // Height of the button
+        };
+
+        this.playButton.x = (PARAMS.CANVAS_WIDTH - this.playButton.width) / 2 + 10, // Center horizontally
+        this.playButton.y = (PARAMS.CANVAS_HEIGHT - this.playButton.height) - 140, // Center vertically
 
         // CONTROLS BUTTON
         this.controlButton = {
@@ -148,6 +159,18 @@ class TransitionScreen {
             });
         }
 
+        if(this.isThatLevelScreen) {
+            if (!this.backButton.isPressed && mouseX >= this.backButton.x && mouseX <= this.backButton.x + this.backButton.width &&
+                mouseY >= this.backButton.y && mouseY <= this.backButton.y + this.backButton.height) {
+                this.backButton.isPressed = true;
+            } 
+
+            if (!this.playButton.isPressed && mouseX >= this.playButton.x && mouseX <= this.playButton.x + this.playButton.width &&
+                mouseY >= this.playButton.y && mouseY <= this.playButton.y + this.playButton.height) {
+                this.playButton.isPressed = true;
+            }
+        }
+
         if(this.gameOver) { 
             if (!this.homeButton.isPressed && mouseX >= this.homeButton.x && mouseX <= this.homeButton.x + this.homeButton.width &&
                 mouseY >= this.homeButton.y && mouseY <= this.homeButton.y + this.homeButton.height) {
@@ -170,13 +193,14 @@ class TransitionScreen {
             this.controlButton.isPressed = false;
             this.levelsButton.isPressed = false;
             this.creditsButton.isPressed = false;
+            this.level = level1; // DEFAULT LEVEL -- PRACTICE
         } else if (this.isControlScreen) {
             this.backButton.isPressed = false;
         } else if (this.isLevelsScreen) {
             this.backButton.isPressed = false;
-            this.selectLevelButtons.forEach(button => {
-                button.isPressed = false;
-            });
+        } else if (this.isThatLevelScreen) {
+            this.backButton.isPressed = false;
+            this.playButton.isPressed = false;
         } else if (this.isCreditsScreen) {
             this.backButton,isPressed = false;
         } else if (this.gameOver) {
@@ -184,6 +208,12 @@ class TransitionScreen {
         } else if (this.gameWin) {
             this.homeButton.isPressed = false;
         }
+
+        // Level Buttons reset when transitioned to different screen
+        this.selectLevelButtons.forEach(button => {
+            button.isPressed = false;
+        });
+
     }    
 
     handleMouseClick(event) {
@@ -205,6 +235,7 @@ class TransitionScreen {
                     this.isTitleScreen = false;
                     this.isLevelsScreen = false;
                     this.isCreditsScreen = false;
+                    this.isThatLevelScreen = false;
             }
 
             if (!this.gameStarted && mouseX >= this.levelsButton.x && mouseX <= this.levelsButton.x + this.levelsButton.width &&
@@ -213,7 +244,7 @@ class TransitionScreen {
                     this.isTitleScreen = false;
                     this.isLevelsScreen = true;
                     this.isCreditsScreen = false;
-
+                    this.isThatLevelScreen = false;
             }
 
             if (!this.gameStarted && mouseX >= this.creditsButton.x && mouseX <= this.creditsButton.x + this.creditsButton.width &&
@@ -222,6 +253,7 @@ class TransitionScreen {
                     this.isTitleScreen = false;
                     this.isLevelsScreen = false;
                     this.isCreditsScreen = true;
+                    this.isThatLevelScreen = false;
             }
         }
 
@@ -232,6 +264,7 @@ class TransitionScreen {
                     this.isLevelsScreen = false; 
                     this.isTitleScreen = true;
                     this.isCreditsScreen = false;
+                    this.isThatLevelScreen = false;
             }
         }
 
@@ -242,12 +275,22 @@ class TransitionScreen {
                     this.isLevelsScreen = false; 
                     this.isTitleScreen = true;
                     this.isCreditsScreen = false;
+                    this.isThatLevelScreen = false;
             }
 
             this.selectLevelButtons.forEach(button => {
                 if (mouseX >= button.x && mouseX <= button.x + button.width &&
                     mouseY >= button.y && mouseY <= button.y + button.height) {
                         button.isPressed = true;
+
+                        this.isControlScreen = false;
+                        this.isLevelsScreen = false; 
+                        this.isTitleScreen = false;
+                        this.isCreditsScreen = false;
+                        this.isThatLevelScreen = true;
+
+                        this.levelIndex = button.selectLevelIndex;
+
                         if(button.selectLevelIndex === 1) {
                             this.level = level1;
                         } else if (button.selectLevelIndex === 2) {
@@ -258,6 +301,23 @@ class TransitionScreen {
             
         }
 
+        if(this.isThatLevelScreen) {
+            if (!this.gameStarted && mouseX >= this.backButton.x && mouseX <= this.backButton.x + this.backButton.width &&
+                mouseY >= this.backButton.y && mouseY <= this.backButton.y + this.backButton.height) {
+                    this.isControlScreen = false;
+                    this.isLevelsScreen = true; 
+                    this.isTitleScreen = false;
+                    this.isCreditsScreen = false;
+                    this.isThatLevelScreen = false;
+            }
+
+            if (!this.gameStarted && mouseX >= this.playButton.x && mouseX <= this.playButton.x + this.playButton.width &&
+                mouseY >= this.playButton.y && mouseY <= this.playButton.y + this.playButton.height) {
+                this.gameStarted = true;
+                this.game.camera.loadLevel(this.level, this.x, this.y, false, this.gameOver, this.gameWin);
+            }
+        }
+
         if(this.isCreditsScreen) {
             if (!this.gameStarted && mouseX >= this.backButton.x && mouseX <= this.backButton.x + this.backButton.width &&
                 mouseY >= this.backButton.y && mouseY <= this.backButton.y + this.backButton.height) {
@@ -265,6 +325,7 @@ class TransitionScreen {
                     this.isLevelsScreen = false; 
                     this.isTitleScreen = true;
                     this.isCreditsScreen = false;
+                    this.isThatLevelScreen = false;
             }
         }
 
@@ -514,8 +575,61 @@ class TransitionScreen {
                     ctx.font = "bold 24px Arial";
                     ctx.textAlign = "center";
                     ctx.textBaseline = "middle";
-                    ctx.fillText("level " + (button.selectLevelIndex), button.x + button.width / 2, button.y + button.height / 2);
+                    ctx.fillText("Level " + (button.selectLevelIndex), button.x + button.width / 2, button.y + button.height / 2);
                 });
+            }
+
+            if(this.isThatLevelScreen) {
+                ctx.fillStyle = 'rgba(200, 250, 150, 0.5)'; // Purple with 50% opacity
+                ctx.fillRect(0, 0, PARAMS.CANVAS_WIDTH, PARAMS.CANVAS_HEIGHT); // Draw a rectangle covering the entire canvas
+
+
+                // Draw the BACK button
+                if (this.backButton.isPressed) {
+                    // Button pressed state
+                    ctx.fillStyle = "#135e0a"; // Darker green color
+                    // ctx.fillRect(this.backButton.x + 2, this.backButton.y + 2, this.backButton.width, this.backButton.height);
+                    ctx.roundRect(this.backButton.x, this.backButton.y, this.backButton.width, this.backButton.height, 10); // Call the roundRect method to draw the rounded rectangle
+                    ctx.fill(); // Fill the rounded rectangle with the specified color
+                } else {
+                    // Normal button state
+                    ctx.fillStyle = "#4CAF50"; // Green color
+                    // ctx.fillRect(this.backButton.x, this.backButton.y, this.backButton.width, this.backButton.height);
+                    ctx.roundRect(this.backButton.x, this.backButton.y, this.backButton.width, this.backButton.height, 10); // Call the roundRect method to draw the rounded rectangle
+                    ctx.fill(); // Fill the rounded rectangle with the specified color
+                }
+
+                // Draw the text
+                ctx.fillStyle = "#FFFFFF"; // White color
+                ctx.font = "bold 24px Arial";
+                ctx.textAlign = "center";
+                ctx.textBaseline = "middle";
+                ctx.fillText("BACK", this.backButton.x + this.backButton.width / 2, this.backButton.y + this.backButton.height / 2);
+
+                // Draw the CONTROL button
+                if (this.playButton.isPressed) {
+                    // Button pressed state
+                    ctx.fillStyle = "#135e0a"; // Darker green color
+                    // ctx.fillRect(this.controlButton.x + 2, this.controlButton.y + 2, this.controlButton.width, this.controlButton.height);
+                    ctx.roundRect(this.playButton.x, this.playButton.y, this.playButton.width, this.playButton.height, 10); // Call the roundRect method to draw the rounded rectangle
+                    ctx.fill(); // Fill the rounded rectangle with the specified color
+                } else {
+                    // Normal button state
+                    ctx.fillStyle = "#4CAF50"; // Green color
+                    // ctx.fillRect(this.controlButton.x, this.controlButton.y, this.controlButton.width, this.controlButton.height);
+                    ctx.roundRect(this.playButton.x, this.playButton.y, this.playButton.width, this.playButton.height, 10); // Call the roundRect method to draw the rounded rectangle
+                    ctx.fill(); // Fill the rounded rectangle with the specified color
+                }
+                
+                // Draw the text
+                ctx.fillStyle = "#FFFFFF"; // White color
+                ctx.font = "bold 24px Arial";
+                ctx.textAlign = "center";
+                ctx.textBaseline = "middle";
+                ctx.fillText("PLAY", this.playButton.x + this.playButton.width / 2, this.playButton.y + this.playButton.height / 2);
+
+                ctx.fillStyle = "Black"; 
+                ctx.fillText("Level " + this.levelIndex, PARAMS.CANVAS_WIDTH / 2, 100);
             }
 
             if(this.isCreditsScreen) {
